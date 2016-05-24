@@ -31,4 +31,9 @@ public class BandLineDataSet extends LineDataSet implements IBandLineDataSet {
     public LineDataSet getBottomDataSet() {
         return bottomDataSet;
     }
+
+    @Override
+    public int getEntryCount() {
+        return topDataSet.getEntryCount() + bottomDataSet.getEntryCount();
+    }
 }
