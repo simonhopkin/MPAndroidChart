@@ -255,4 +255,10 @@ public class BandLineChartRenderer extends LineChartRenderer {
         //super.drawCircles(c);
         //TODO
     }
+
+    @Override
+    public void drawValues(Canvas c) {
+        //super.drawValues(c);
+        //TODO
+    }
 }
