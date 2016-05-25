@@ -260,25 +260,34 @@ public class BandLineChartRenderer extends LineChartRenderer {
             }
 
             if (!reverseOrder) {
-                for (CubicPoint point: points) {
-                    path.moveTo(point.getStartPoint().x, point.getStartPoint().y);
-                    path.cubicTo(point.getControlPoint1().x, point.getControlPoint1().y,
-                            point.getControlPoint2().x, point.getControlPoint2().y,
-                            point.getEndPoint().x, point.getEndPoint().y);
+
+                if (!points.isEmpty()) {
+                    path.moveTo(points.get(0).getStartPoint().x, points.get(0).getStartPoint().y);
+
+                    for (CubicPoint point: points) {
+                        path.cubicTo(point.getControlPoint1().x, point.getControlPoint1().y,
+                                point.getControlPoint2().x, point.getControlPoint2().y,
+                                point.getEndPoint().x, point.getEndPoint().y);
+                    }
+
+                    bounds.set(firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y);
                 }
 
-                bounds.set(firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y);
             }
             else {
                 Collections.reverse(points);
-                for (CubicPoint point: points) {
-                    path.moveTo(point.getEndPoint().x, point.getEndPoint().y);
-                    path.cubicTo(point.getControlPoint2().x, point.getControlPoint2().y,
-                            point.getControlPoint1().x, point.getControlPoint1().y,
-                            point.getStartPoint().x, point.getStartPoint().y);
-                }
+                if (!points.isEmpty()) {
 
-                bounds.set(lastPoint.x, lastPoint.y, firstPoint.x, firstPoint.y);
+                    path.moveTo(points.get(0).getEndPoint().x, points.get(0).getEndPoint().y);
+
+                    for (CubicPoint point : points) {
+                        path.cubicTo(point.getControlPoint2().x, point.getControlPoint2().y,
+                                point.getControlPoint1().x, point.getControlPoint1().y,
+                                point.getStartPoint().x, point.getStartPoint().y);
+                    }
+
+                    bounds.set(lastPoint.x, lastPoint.y, firstPoint.x, firstPoint.y);
+                }
             }
 
         }
