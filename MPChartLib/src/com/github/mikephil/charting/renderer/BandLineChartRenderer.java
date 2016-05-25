@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
@@ -124,15 +125,16 @@ public class BandLineChartRenderer extends LineChartRenderer {
 
         float phaseX = Math.max(0.f, Math.min(1.f, mAnimator.getPhaseX()));
 
-        PointF topPathEndPoint = createCubitPathForDataSet(dataSet.getTopDataSet(), topCubicPath, false);
-        PointF bottomPathEndPoint = createCubitPathForDataSet(dataSet.getBottomDataSet(), bottomCubicPath, true);
+        RectF topPathBounds = createCubitPathForDataSet(dataSet.getTopDataSet(), topCubicPath, false);
+        RectF bottomPathBounds = createCubitPathForDataSet(dataSet.getBottomDataSet(), bottomCubicPath, true);
 
         int size = (int) Math.ceil((maxx - minx) * phaseX + minx);
 
         Path mergedPath = new Path();
         mergedPath.addPath(topCubicPath);
-        mergedPath.lineTo(bottomPathEndPoint.x, bottomPathEndPoint.y);
+        mergedPath.lineTo(bottomPathBounds.left, bottomPathBounds.top);
         mergedPath.addPath(bottomCubicPath);
+        mergedPath.lineTo(topPathBounds.left, topPathBounds.top);
 
         cubicFillPath.reset();
         cubicFillPath.addPath(mergedPath);
@@ -186,7 +188,7 @@ public class BandLineChartRenderer extends LineChartRenderer {
 
     }
 
-    private PointF createCubitPathForDataSet(ILineDataSet dataSet, Path path, boolean reverseOrder) {
+    private RectF createCubitPathForDataSet(ILineDataSet dataSet, Path path, boolean reverseOrder) {
         Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
 
         int entryCount = dataSet.getEntryCount();
@@ -208,6 +210,9 @@ public class BandLineChartRenderer extends LineChartRenderer {
         int size = (int) Math.ceil((maxx - minx) * phaseX + minx);
 
         PointF lastPoint = new PointF();
+        PointF firstPoint = new PointF();
+        RectF bounds = new RectF();
+
         List<CubicPoint> points = new ArrayList<>();
 
         if (size - minx >= 2) {
@@ -222,7 +227,8 @@ public class BandLineChartRenderer extends LineChartRenderer {
             Entry cur = prev;
             Entry next = dataSet.getEntryForIndex(minx + 1);
 
-            lastPoint = new PointF(cur.getXIndex(), cur.getVal() * phaseY);
+            firstPoint.set(cur.getXIndex(), cur.getVal() * phaseY);
+            lastPoint.set(cur.getXIndex(), cur.getVal() * phaseY);
 
             // let the spline start
             //path.moveTo(cur.getXIndex(), cur.getVal() * phaseY);
@@ -259,6 +265,8 @@ public class BandLineChartRenderer extends LineChartRenderer {
                             point.getControlPoint2().x, point.getControlPoint2().y,
                             point.getEndPoint().x, point.getEndPoint().y);
                 }
+
+                bounds.set(firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y);
             }
             else {
                 Collections.reverse(points);
@@ -268,11 +276,13 @@ public class BandLineChartRenderer extends LineChartRenderer {
                             point.getControlPoint1().x, point.getControlPoint1().y,
                             point.getStartPoint().x, point.getStartPoint().y);
                 }
+
+                bounds.set(lastPoint.x, lastPoint.y, firstPoint.x, firstPoint.y);
             }
 
         }
 
-        return lastPoint;
+        return bounds;
     }
 
 
