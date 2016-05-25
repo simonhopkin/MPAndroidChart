@@ -126,11 +126,13 @@ public class BandLineChartRenderer extends LineChartRenderer {
 
         int size = (int) Math.ceil((maxx - minx) * phaseX + minx);
 
-        topCubicPath.lineTo(bottomPathEndPoint.x, bottomPathEndPoint.y);
-        topCubicPath.addPath(bottomCubicPath);
+        Path mergedPath = new Path();
+        mergedPath.addPath(topCubicPath);
+        mergedPath.lineTo(bottomPathEndPoint.x, bottomPathEndPoint.y);
+        mergedPath.addPath(bottomCubicPath);
 
         cubicFillPath.reset();
-        cubicFillPath.addPath(topCubicPath);
+        cubicFillPath.addPath(mergedPath);
         // create a new path, this is bad for performance
         drawCubicFill(mBitmapCanvas, dataSet, cubicFillPath, trans, minx, size);
 
@@ -141,6 +143,7 @@ public class BandLineChartRenderer extends LineChartRenderer {
         trans.pathValueToPixel(topCubicPath);
 
         mBitmapCanvas.drawPath(topCubicPath, mRenderPaint);
+        mBitmapCanvas.drawPath(bottomCubicPath, mRenderPaint);
 
         mRenderPaint.setPathEffect(null);
     }
