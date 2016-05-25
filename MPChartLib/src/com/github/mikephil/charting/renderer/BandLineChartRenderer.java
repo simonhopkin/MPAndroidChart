@@ -142,19 +142,6 @@ public class BandLineChartRenderer extends LineChartRenderer {
         // create a new path, this is bad for performance
         drawCubicFill(mBitmapCanvas, dataSet, cubicFillPath, trans, minx, size);
 
-        mRenderPaint.setColor(dataSet.getColor());
-
-        mRenderPaint.setStyle(Paint.Style.STROKE);
-
-        trans.pathValueToPixel(topCubicPath);
-        mBitmapCanvas.drawPath(topCubicPath, mRenderPaint);
-
-        trans.pathValueToPixel(bottomCubicPath);
-        mBitmapCanvas.drawPath(bottomCubicPath, mRenderPaint);
-
-        //trans.pathValueToPixel(mergedPath);
-        //mBitmapCanvas.drawPath(mergedPath, mRenderPaint);
-
         mRenderPaint.setPathEffect(null);
     }
 
@@ -229,9 +216,6 @@ public class BandLineChartRenderer extends LineChartRenderer {
             firstPoint.set(cur.getXIndex(), cur.getVal() * phaseY);
             lastPoint.set(cur.getXIndex(), cur.getVal() * phaseY);
 
-            // let the spline start
-            //path.moveTo(cur.getXIndex(), cur.getVal() * phaseY);
-
             for (int j = minx + 1, count = Math.min(size, entryCount); j < count; j++) {
 
                 prevPrev = dataSet.getEntryForIndex(j == 1 ? 0 : j - 2);
@@ -250,11 +234,6 @@ public class BandLineChartRenderer extends LineChartRenderer {
                         new PointF(cur.getXIndex(), cur.getVal() * phaseY)));
 
                 lastPoint.set(cur.getXIndex(), cur.getVal() * phaseY);
-
-                //path.cubicTo(prev.getXIndex() + prevDx, (prev.getVal() + prevDy) * phaseY,
-                //        cur.getXIndex() - curDx,
-                //        (cur.getVal() - curDy) * phaseY, cur.getXIndex(), cur.getVal() * phaseY);
-
             }
 
             if (!reverseOrder) {
@@ -297,25 +276,7 @@ public class BandLineChartRenderer extends LineChartRenderer {
 
     @Override
     protected void drawCubicFill(Canvas c, ILineDataSet dataSet, Path spline, Transformer trans, int from, int to) {
-/*
-        if (to - from <= 1)
-            return;
 
-        float fillMin = dataSet.getFillFormatter()
-                .getFillLinePosition(dataSet, mChart);
-
-        // Take the from/to xIndex from the entries themselves,
-        // so missing entries won't screw up the filling.
-        // What we need to draw is line from points of the xIndexes - not arbitrary entry indexes!
-
-        final Entry toEntry = dataSet.getEntryForIndex(to - 1);
-        final Entry fromEntry = dataSet.getEntryForIndex(from);
-        final float xTo = toEntry == null ? 0 : toEntry.getXIndex();
-        final float xFrom = fromEntry == null ? 0 : fromEntry.getXIndex();
-
-        spline.lineTo(xTo, fillMin);
-        spline.lineTo(xFrom, fillMin);
-        */
         spline.close();
 
         trans.pathValueToPixel(spline);
