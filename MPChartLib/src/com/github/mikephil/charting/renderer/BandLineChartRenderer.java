@@ -243,4 +243,16 @@ public class BandLineChartRenderer extends LineChartRenderer {
             drawFilledPath(c, spline, dataSet.getFillColor(), dataSet.getFillAlpha());
         }
     }
+
+    @Override
+    public void drawExtras(Canvas c) {
+        //super.drawExtras(c);
+        //TODO
+    }
+
+    @Override
+    protected void drawCircles(Canvas c) {
+        //super.drawCircles(c);
+        //TODO
+    }
 }
