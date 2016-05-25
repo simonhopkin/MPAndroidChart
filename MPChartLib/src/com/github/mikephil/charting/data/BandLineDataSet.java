@@ -47,4 +47,14 @@ public class BandLineDataSet extends LineDataSet implements IBandLineDataSet {
     public int getHighlightOutlineColor() {
         return highlightOutlineColor;
     }
+
+    @Override
+    public float getYMax() {
+        return Math.max(topDataSet.getYMax(), bottomDataSet.getYMax());
+    }
+
+    @Override
+    public float getYMin() {
+        return Math.min(topDataSet.getYMax(), bottomDataSet.getYMax());
+    }
 }
