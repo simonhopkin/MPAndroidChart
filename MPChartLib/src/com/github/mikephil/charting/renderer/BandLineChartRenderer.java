@@ -190,8 +190,6 @@ public class BandLineChartRenderer extends LineChartRenderer {
     }
 
     private RectF createCubitPathForDataSet(ILineDataSet dataSet, Path path, boolean reverseOrder) {
-        Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
-
         int entryCount = dataSet.getEntryCount();
 
         Entry entryFrom = dataSet.getEntryForXIndex((mMinX < 0) ? 0 : mMinX, DataSet.Rounding.DOWN);
@@ -246,7 +244,7 @@ public class BandLineChartRenderer extends LineChartRenderer {
                 curDx = (next.getXIndex() - prev.getXIndex()) * intensity;
                 curDy = (next.getVal() - prev.getVal()) * intensity;
 
-                points.add(new CubicPoint(lastPoint,
+                points.add(new CubicPoint(new PointF(lastPoint.x, lastPoint.y),
                         new PointF(prev.getXIndex() + prevDx, (prev.getVal() + prevDy) * phaseY),
                         new PointF(cur.getXIndex() - curDx, (cur.getVal() - curDy) * phaseY),
                         new PointF(cur.getXIndex(), cur.getVal() * phaseY)));
