@@ -322,6 +322,6 @@ public class BandLineChartRenderer extends LineChartRenderer {
         c.drawCircle(pts[0], pts[1], 50, mRenderPaint);
 
         mRenderPaint.setColor(set.getHighLightColor());
-        c.drawCircle(pts[0], pts[1], 20, mRenderPaint);
+        c.drawCircle(pts[0], pts[1], 16, mRenderPaint);
     }
 }
