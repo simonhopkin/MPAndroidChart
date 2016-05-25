@@ -316,15 +316,12 @@ public class BandLineChartRenderer extends LineChartRenderer {
     protected void drawHighlightLines(Canvas c, float[] pts, ILineScatterCandleRadarDataSet set) {
         super.drawHighlightLines(c, pts, set);
 
+        mRenderPaint.setStyle(Paint.Style.FILL);
 
-        if (set instanceof BandLineDataSet) {
+        mRenderPaint.setColor(Color.argb(50, 255, 255, 255));
+        c.drawCircle(pts[0], pts[1], 30, mRenderPaint);
 
-            mRenderPaint.setStyle(Paint.Style.FILL);
-            mRenderPaint.setColor(((BandLineDataSet) set).getHighlightOutlineColor());
-            c.drawCircle(pts[0], pts[1], 30, mRenderPaint);
-
-            mRenderPaint.setColor(((BandLineDataSet) set).getHighLightColor());
-            c.drawCircle(pts[0], pts[1], 8, mRenderPaint);
-        }
+        mRenderPaint.setColor(((BandLineDataSet) set).getHighLightColor());
+        c.drawCircle(pts[0], pts[1], 8, mRenderPaint);
     }
 }
