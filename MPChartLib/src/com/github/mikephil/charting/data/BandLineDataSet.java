@@ -1,5 +1,7 @@
 package com.github.mikephil.charting.data;
 
+import android.graphics.Color;
+
 import com.github.mikephil.charting.interfaces.datasets.IBandLineDataSet;
 
 import java.util.List;
@@ -11,6 +13,7 @@ public class BandLineDataSet extends LineDataSet implements IBandLineDataSet {
 
     private LineDataSet topDataSet;
     private LineDataSet bottomDataSet;
+    private int highlightOutlineColor;
 
     public BandLineDataSet(List<Entry> yVals, String label) {
         super(yVals, label);
@@ -35,5 +38,13 @@ public class BandLineDataSet extends LineDataSet implements IBandLineDataSet {
     @Override
     public int getEntryCount() {
         return Math.max(topDataSet.getEntryCount(), bottomDataSet.getEntryCount());
+    }
+
+    public void setHighlightOutlineColor(int highlightOutlineColor) {
+        this.highlightOutlineColor = highlightOutlineColor;
+    }
+
+    public int getHighlightOutlineColor() {
+        return highlightOutlineColor;
     }
 }

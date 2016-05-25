@@ -11,12 +11,15 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
+import com.github.mikephil.charting.data.BandLineDataSet;
 import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.IBandLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineScatterCandleRadarDataSet;
 import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
@@ -307,5 +310,21 @@ public class BandLineChartRenderer extends LineChartRenderer {
     public void drawValues(Canvas c) {
         //super.drawValues(c);
         //TODO
+    }
+
+    @Override
+    protected void drawHighlightLines(Canvas c, float[] pts, ILineScatterCandleRadarDataSet set) {
+        super.drawHighlightLines(c, pts, set);
+
+
+        if (set instanceof BandLineDataSet) {
+
+            mRenderPaint.setStyle(Paint.Style.FILL);
+            mRenderPaint.setColor(((BandLineDataSet) set).getHighlightOutlineColor());
+            c.drawCircle(pts[0], pts[1], 30, mRenderPaint);
+
+            mRenderPaint.setColor(((BandLineDataSet) set).getHighLightColor());
+            c.drawCircle(pts[0], pts[1], 8, mRenderPaint);
+        }
     }
 }
