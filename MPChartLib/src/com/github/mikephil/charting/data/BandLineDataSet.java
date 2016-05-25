@@ -34,6 +34,6 @@ public class BandLineDataSet extends LineDataSet implements IBandLineDataSet {
 
     @Override
     public int getEntryCount() {
-        return topDataSet.getEntryCount() + bottomDataSet.getEntryCount();
+        return Math.max(topDataSet.getEntryCount(), bottomDataSet.getEntryCount());
     }
 }
