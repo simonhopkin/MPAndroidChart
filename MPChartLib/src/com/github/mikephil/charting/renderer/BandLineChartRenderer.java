@@ -146,14 +146,14 @@ public class BandLineChartRenderer extends LineChartRenderer {
 
         mRenderPaint.setStyle(Paint.Style.STROKE);
 
-       // trans.pathValueToPixel(topCubicPath);
-        //mBitmapCanvas.drawPath(topCubicPath, mRenderPaint);
+        trans.pathValueToPixel(topCubicPath);
+        mBitmapCanvas.drawPath(topCubicPath, mRenderPaint);
 
-        //trans.pathValueToPixel(bottomCubicPath);
-        //mBitmapCanvas.drawPath(bottomCubicPath, mRenderPaint);
+        trans.pathValueToPixel(bottomCubicPath);
+        mBitmapCanvas.drawPath(bottomCubicPath, mRenderPaint);
 
-        trans.pathValueToPixel(mergedPath);
-        mBitmapCanvas.drawPath(mergedPath, mRenderPaint);
+        //trans.pathValueToPixel(mergedPath);
+        //mBitmapCanvas.drawPath(mergedPath, mRenderPaint);
 
         mRenderPaint.setPathEffect(null);
     }
