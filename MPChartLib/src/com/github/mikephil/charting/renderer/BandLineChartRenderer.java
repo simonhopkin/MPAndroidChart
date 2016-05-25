@@ -20,6 +20,9 @@ import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by simon.hopkin on 24/05/2016.
@@ -121,8 +124,8 @@ public class BandLineChartRenderer extends LineChartRenderer {
 
         float phaseX = Math.max(0.f, Math.min(1.f, mAnimator.getPhaseX()));
 
-        PointF topPathEndPoint = createCubitPathForDataSet(dataSet.getTopDataSet(), topCubicPath);
-        PointF bottomPathEndPoint = createCubitPathForDataSet(dataSet.getBottomDataSet(), bottomCubicPath);
+        PointF topPathEndPoint = createCubitPathForDataSet(dataSet.getTopDataSet(), topCubicPath, false);
+        PointF bottomPathEndPoint = createCubitPathForDataSet(dataSet.getBottomDataSet(), bottomCubicPath, true);
 
         int size = (int) Math.ceil((maxx - minx) * phaseX + minx);
 
@@ -149,8 +152,38 @@ public class BandLineChartRenderer extends LineChartRenderer {
         mRenderPaint.setPathEffect(null);
     }
 
+    private static class CubicPoint {
+        private PointF startPoint;
+        private PointF controlPoint1;
+        private PointF controlPoint2;
+        private PointF endPoint;
 
-    private PointF createCubitPathForDataSet(ILineDataSet dataSet, Path path) {
+        public CubicPoint(PointF startPoint, PointF controlPoint1, PointF controlPoint2, PointF endPoint) {
+            this.startPoint = startPoint;
+            this.controlPoint1 = controlPoint1;
+            this.controlPoint2 = controlPoint2;
+            this.endPoint = endPoint;
+        }
+
+        public PointF getStartPoint() {
+            return startPoint;
+        }
+
+        public PointF getControlPoint1() {
+            return controlPoint1;
+        }
+
+        public PointF getControlPoint2() {
+            return controlPoint2;
+        }
+
+        public PointF getEndPoint() {
+            return endPoint;
+        }
+
+    }
+
+    private PointF createCubitPathForDataSet(ILineDataSet dataSet, Path path, boolean reverseOrder) {
         Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
 
         int entryCount = dataSet.getEntryCount();
@@ -172,6 +205,7 @@ public class BandLineChartRenderer extends LineChartRenderer {
         int size = (int) Math.ceil((maxx - minx) * phaseX + minx);
 
         PointF lastPoint = new PointF();
+        List<CubicPoint> points = new ArrayList<>();
 
         if (size - minx >= 2) {
 
@@ -185,8 +219,10 @@ public class BandLineChartRenderer extends LineChartRenderer {
             Entry cur = prev;
             Entry next = dataSet.getEntryForIndex(minx + 1);
 
+            lastPoint = new PointF(cur.getXIndex(), cur.getVal() * phaseY);
+
             // let the spline start
-            path.moveTo(cur.getXIndex(), cur.getVal() * phaseY);
+            //path.moveTo(cur.getXIndex(), cur.getVal() * phaseY);
 
             for (int j = minx + 1, count = Math.min(size, entryCount); j < count; j++) {
 
@@ -200,12 +236,37 @@ public class BandLineChartRenderer extends LineChartRenderer {
                 curDx = (next.getXIndex() - prev.getXIndex()) * intensity;
                 curDy = (next.getVal() - prev.getVal()) * intensity;
 
-                path.cubicTo(prev.getXIndex() + prevDx, (prev.getVal() + prevDy) * phaseY,
-                        cur.getXIndex() - curDx,
-                        (cur.getVal() - curDy) * phaseY, cur.getXIndex(), cur.getVal() * phaseY);
+                points.add(new CubicPoint(lastPoint,
+                        new PointF(prev.getXIndex() + prevDx, (prev.getVal() + prevDy) * phaseY),
+                        new PointF(cur.getXIndex() - curDx, (cur.getVal() - curDy) * phaseY),
+                        new PointF(cur.getXIndex(), cur.getVal() * phaseY)));
 
                 lastPoint.set(cur.getXIndex(), cur.getVal() * phaseY);
+
+                //path.cubicTo(prev.getXIndex() + prevDx, (prev.getVal() + prevDy) * phaseY,
+                //        cur.getXIndex() - curDx,
+                //        (cur.getVal() - curDy) * phaseY, cur.getXIndex(), cur.getVal() * phaseY);
+
             }
+
+            if (!reverseOrder) {
+                for (CubicPoint point: points) {
+                    path.moveTo(point.getStartPoint().x, point.getStartPoint().y);
+                    path.cubicTo(point.getControlPoint1().x, point.getControlPoint1().y,
+                            point.getControlPoint2().x, point.getControlPoint2().y,
+                            point.getEndPoint().x, point.getEndPoint().y);
+                }
+            }
+            else {
+                Collections.reverse(points);
+                for (CubicPoint point: points) {
+                    path.moveTo(point.getEndPoint().x, point.getEndPoint().y);
+                    path.cubicTo(point.getControlPoint2().x, point.getControlPoint2().y,
+                            point.getControlPoint1().x, point.getControlPoint1().y,
+                            point.getStartPoint().x, point.getStartPoint().y);
+                }
+            }
+
         }
 
         return lastPoint;
