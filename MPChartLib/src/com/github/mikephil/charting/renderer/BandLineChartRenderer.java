@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.data.DataSet;
@@ -210,6 +211,36 @@ public class BandLineChartRenderer extends LineChartRenderer {
 
     @Override
     protected void drawCubicFill(Canvas c, ILineDataSet dataSet, Path spline, Transformer trans, int from, int to) {
-        super.drawCubicFill(c, dataSet, spline, trans, from, to);
+/*
+        if (to - from <= 1)
+            return;
+
+        float fillMin = dataSet.getFillFormatter()
+                .getFillLinePosition(dataSet, mChart);
+
+        // Take the from/to xIndex from the entries themselves,
+        // so missing entries won't screw up the filling.
+        // What we need to draw is line from points of the xIndexes - not arbitrary entry indexes!
+
+        final Entry toEntry = dataSet.getEntryForIndex(to - 1);
+        final Entry fromEntry = dataSet.getEntryForIndex(from);
+        final float xTo = toEntry == null ? 0 : toEntry.getXIndex();
+        final float xFrom = fromEntry == null ? 0 : fromEntry.getXIndex();
+
+        spline.lineTo(xTo, fillMin);
+        spline.lineTo(xFrom, fillMin);
+        */
+        spline.close();
+
+        trans.pathValueToPixel(spline);
+
+        final Drawable drawable = dataSet.getFillDrawable();
+        if (drawable != null) {
+
+            drawFilledPath(c, spline, drawable);
+        } else {
+
+            drawFilledPath(c, spline, dataSet.getFillColor(), dataSet.getFillAlpha());
+        }
     }
 }
